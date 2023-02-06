@@ -8,8 +8,8 @@
 
 
 #define D 2 
-#define L 50
-#define deco 30
+#define L 10
+#define deco 100
 #define extf 0
 #define PI 3.14159265
 
@@ -158,85 +158,34 @@ void mediadev(double *vet, double *d){
 	m=m/stat;
 	m2=m2/stat;
 	d[0]=m;
-	d[1]=sqrt(m2-(m*m)/stat);
+	d[1]=sqrt(m2-(m*m));
 	return;
 }
 
 
-void bootstrap (double *vet, double *m, int k) {
+void bootstrappo (double *vet, double *m, int k, int l) {
 	int i,j,z;
 	double medie[k],medie2[k];
 	m[0]=0;
 	m[1]=0;
 		
 	for (i=0;i<k;i++){
-		medie[k]=0;
-		medie2[k]=0;
-		for(j=0;j<stat;j++){
+		medie[i]=0;
+		medie2[i]=0;
+		for(j=0;j<l;j++){
 			z=rand()%stat;
-			medie[k]+=vet[z];
-			medie2[k]+=vet[z]*vet[z];
-		}
-		medie[k]=medie[k]/stat;
-		medie2[k]=medie2[k]/stat;
-		m[0]+=medie[k];
-		m[1]+=medie2[k];
-	}
-	m[0]=(double) m[0]/k;
-	m[1]=(double) sqrt(m[1]-m[0]*m[0]);
-	return;
-}
 
-void bootstrap2 (double *vet1, double *vet2, double *x, int k, double t){
-	int i,j,z;
-	double m1[k],m2[k],d1[k],d2[k];
-	double y,y2;
-	y=0;
-	y2=0;
-	
-	for(i=0;i<k;i++){
-		m1[i]=0;
-		m2[i]=0;
-		for(j=0;j<stat;j++){
-			z=rand()%stat;
-			m1[i]+=vet1[z];
-			m2[i]+=vet2[z];
+			medie[i]+=vet[z];
+			medie2[i]+=vet[z]*vet[z];
 		}
-		m1[i]=m1[i]/stat;
-		m2[i]=m2[i]/stat;
-		y+=(m2[i]-m1[i]*m1[i])/t;
-		y2+=pow(((m2[i]-m1[i]*m1[i])/t),2);
-		
-	}
-	x[0]=(y/k)*L*L;
-	x[1]=L*L*sqrt(y2/k-pow((y/k),2));
-	
-
-	return;
-}
-
-void bootstrappo (double *vet, double *m, int k) {
-	int i,j,z;
-	double medie[k],medie2[k];
-	m[0]=0;
-	m[1]=0;
-		
-	for (i=0;i<k;i++){
-		medie[k]=0;
-		medie2[k]=0;
-		for(j=0;j<stat;j++){
-			z=rand()%stat;
-			medie[k]+=vet[z];
-			medie2[k]+=vet[z]*vet[z];
-		}
-		medie[k]=medie[k]/stat;
-		medie2[k]=medie2[k]/stat;
-		m[0]+=medie[k];
-		m[1]+=medie2[k];
+		medie[i]=medie[i]/l;
+		medie2[i]=medie[i]*medie[i];
+		m[0]+=medie[i];
+		m[1]+=medie2[i];
 	}
 	m[0]=(double) m[0]/k;
 	m[1]=(double) m[1]/k;
-	m[1]=(double) m[1]-m[0]*m[0];
+	m[1]=(double) sqrt(m[1]-m[0]*m[0]);
 	return;
 }
 double mean(double* array, int length) {
@@ -293,11 +242,14 @@ int main (void){
 			mana2[a]=M*M;
 			
 		}
+		
+		bootstrappo(mana,dm,1000,stat/10);
+		bootstrappo(ene,de,1000,stat/10);
+		bootstrappo(mana2,dx,1000,stat/10);
+		bootstrappo(ene2,dh,1000,stat/10);
+		
+		
 		fprintf(fp,"%.4lf	",beta);
-		bootstrappo(mana,dm,40);
-		bootstrappo(ene,de,40);
-		bootstrappo(ene2,dh,40);
-		bootstrappo(mana2,dx,40);
 		fprintf(fp,"%.4lf	",dm[0]);
 		fprintf(fp,"%.4lf	",dm[1]);
 		fprintf(fp,"%.4lf	",de[0]);
