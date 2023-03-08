@@ -1,1 +1,0 @@
-#t	c1	dc1	c2	dc2	c2	dc3	c4	dc4	c5	dc5	m	dm	e	de	x	dx	h	dh
